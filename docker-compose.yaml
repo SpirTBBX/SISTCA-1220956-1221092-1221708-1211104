@@ -1,0 +1,63 @@
+services:
+  router1:
+    image: quay.io/frrouting/frr:10.2.1
+    container_name: router1
+    privileged: true
+    networks:
+      net1:
+        ipv4_address: 192.168.200.254
+      wan:
+    volumes:
+      - ./configs/r1/:/etc/frr/
+    sysctls:
+      - net.ipv4.ip_forward=1
+
+  router2:
+    image: quay.io/frrouting/frr:10.2.1
+    container_name: router2
+    privileged: true
+    networks:
+      wan:
+      net3:
+         ipv4_address: 192.168.201.254
+    volumes:
+      - ./configs/r2/:/etc/frr/
+    sysctls:
+      - net.ipv4.ip_forward=1
+
+  host1:
+    image: alpine
+    container_name: host1
+    networks:
+      - net1
+    command: ["sh", "-c", "while true; do sleep 30; done;"]
+
+  host2:
+    image: alpine
+    container_name: host2
+    networks:
+      - net3
+    command: ["sh", "-c", "while true; do sleep 30; done;"]
+
+networks:
+  net1: 
+    name: net1
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.200.0/24
+  wan:
+    name: wan
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.200.0/24
+          gateway: 10.0.200.1
+  net3:
+    name: net3
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.201.0/24
+
+
