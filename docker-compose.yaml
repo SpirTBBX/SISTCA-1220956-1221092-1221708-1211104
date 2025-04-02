@@ -14,7 +14,6 @@ services:
       - ./configs/r1/frr/:/etc/frr/
     sysctls:
       - net.ipv4.ip_forward=1
-    user: "1000:1000"
 
   router2:
     image: quay.io/frrouting/frr:10.2.1
@@ -29,7 +28,6 @@ services:
       - ./configs/r2/frr/:/etc/frr/
     sysctls:
       - net.ipv4.ip_forward=1
-    user: "1000:1000"
 
   router3:
     image: quay.io/frrouting/frr:10.2.1
@@ -46,7 +44,6 @@ services:
       - ./configs/r3/frr/:/etc/frr/
     sysctls:
       - net.ipv4.ip_forward=1
-    user: "1000:1000"
 
 
   host:
@@ -55,7 +52,6 @@ services:
     networks:
       - lan_host
     command: ["sh", "-c", "while true; do sleep 30; done;"]
-    user: "1000:1000"
 
   srv:
     image: nginx
@@ -64,7 +60,6 @@ services:
       lan_srv:
         ipv4_address: 192.168.201.2
     command: ["sh", "-c", "while true; do sleep 30; done;"]
-    user: "1000:1000"
 
 networks:
   wan1:
