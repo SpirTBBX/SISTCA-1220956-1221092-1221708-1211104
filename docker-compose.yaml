@@ -12,10 +12,15 @@ services:
         ipv4_address: 6.80.75.10
     volumes:
       - ./configs/r1/frr/:/etc/frr/
-      - ./configs/r1/startup.sh:/etc/frr/startup.sh
+      - ./configs/r1/startup.sh:/etc/startup.sh
     sysctls:
       - net.ipv4.ip_forward=1
-    command: ["sh", "-c", "sleep 3 && chmod +x /etc/frr/startup.sh && /etc/frr/startup.sh && tail -f /dev/null"]
+    healthcheck:
+      test: ["CMD", "echo", "healthy"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+
 
   router2:
     image: quay.io/frrouting/frr:10.2.1
@@ -28,9 +33,14 @@ services:
          ipv4_address: 95.120.2.66
     volumes:
       - ./configs/r2/frr/:/etc/frr/
+      - ./configs/r2/startup.sh:/etc/startup.sh
     sysctls:
       - net.ipv4.ip_forward=1
-    command: ["sh", "-c", "sleep 3 && chmod +x /etc/frr/startup.sh && /etc/frr/startup.sh && tail -f /dev/null"]
+    healthcheck:
+      test: ["CMD", "echo", "healthy"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
 
   router3:
     image: quay.io/frrouting/frr:10.2.1
@@ -45,9 +55,14 @@ services:
         ipv4_address: 95.120.2.67
     volumes:
       - ./configs/r3/frr/:/etc/frr/
+      - ./configs/r3/startup.sh:/etc/startup.sh
     sysctls:
       - net.ipv4.ip_forward=1
-    command: ["sh", "-c", "sleep 3 && chmod +x /etc/frr/startup.sh && /etc/frr/startup.sh && tail -f /dev/null"]
+    healthcheck:
+      test: ["CMD", "echo", "healthy"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
 
 
   host:
@@ -55,9 +70,16 @@ services:
     container_name: host
     cap_add:
       - NET_ADMIN
+    volumes:
+      - ./configs/host/startup.sh:/etc/startup.sh
     networks:
       - lan_host
-    command: ["sh", "-c", "while true; do sleep 30; done; sleep 3 && chmod +x /etc/frr/startup.sh && /etc/frr/startup.sh"]
+    command: ["sh", "-c", "while true; do sleep 30; done"]
+    healthcheck:
+      test: ["CMD", "echo", "healthy"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
 
   srv:
     image: nginx
@@ -67,8 +89,42 @@ services:
         ipv4_address: 192.168.201.2
     cap_add:
       - NET_ADMIN
-    command: ["sh", "-c", "while true; do sleep 30; done; sleep 3 && chmod +x /etc/frr/startup.sh && /etc/frr/startup.sh"]
+    volumes:
+      - ./configs/srv/startup.sh:/etc/startup.sh
+    command: ["sh", "-c", "while true; do sleep 30; done"]
     user: "1000:1000"
+    healthcheck:
+      test: ["CMD", "echo", "healthy"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+  
+  frr-script-runner:
+    image: docker:cli
+    depends_on:
+      router1:
+        condition: service_healthy
+      router2:
+        condition: service_healthy
+      router3:
+        condition: service_healthy
+      host:
+        condition: service_healthy
+      srv:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c", "sleep 3 && 
+      docker exec router1 chmod +x /etc/startup.sh && 
+      docker exec router2 chmod +x /etc/startup.sh &&
+      docker exec router3 chmod +x /etc/startup.sh &&
+      docker exec host chmod +x /etc/startup.sh &&
+      docker exec srv chmod +x /etc/startup.sh &&
+      docker exec router1 /etc/startup.sh &&
+      docker exec router2 /etc/startup.sh &&
+      docker exec router3 /etc/startup.sh &&
+      docker exec host /etc/startup.sh &&
+      docker exec srv /etc/startup.sh"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   wan1:
@@ -101,6 +157,3 @@ networks:
       driver: default
       config:
         - subnet: 192.168.201.0/24
-
-
-
