@@ -5,7 +5,7 @@ services:
     privileged: true
     networks:
       lan_host:
-        ipv4_address: 192.168.200.254
+        ipv4_address: 37.8.181.254
       wan1:
         ipv4_address: 23.10.49.2
       wan2:
@@ -48,7 +48,7 @@ services:
     privileged: true
     networks:
       lan_srv:
-        ipv4_address: 192.168.201.254
+        ipv4_address: 55.73.20.254
       wan1:
         ipv4_address: 23.10.49.3
       wan3:
@@ -86,12 +86,12 @@ services:
     container_name: srv
     networks:
       lan_srv:
-        ipv4_address: 192.168.201.2
+        ipv4_address: 55.73.20.2
     cap_add:
       - NET_ADMIN
     volumes:
       - ./configs/srv/startup.sh:/etc/startup.sh
-    command: ["sh", "-c", "while true; do sleep 30; done"]
+    command: ["sh", "-c", "sh /etc/startup.sh && while true; do sleep 30; done"]
     user: "1000:1000"
     healthcheck:
       test: ["CMD", "echo", "healthy"]
@@ -142,10 +142,10 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 192.168.200.0/24
+        - subnet: 37.8.181.0/24
   lan_srv:
     name: lan_srv
     ipam:
       driver: default
       config:
-        - subnet: 192.168.201.0/24
+        - subnet: 55.73.20.0/24
