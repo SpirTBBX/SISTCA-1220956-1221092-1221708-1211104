@@ -112,19 +112,11 @@ services:
         condition: service_healthy
       srv:
         condition: service_healthy
-    entrypoint: ["/bin/sh", "-c", "sleep 3 && 
-      docker exec router1 chmod +x /etc/startup.sh && 
-      docker exec router2 chmod +x /etc/startup.sh &&
-      docker exec router3 chmod +x /etc/startup.sh &&
-      docker exec host chmod +x /etc/startup.sh &&
-      docker exec srv chmod +x /etc/startup.sh &&
-      docker exec router1 /etc/startup.sh &&
-      docker exec router2 /etc/startup.sh &&
-      docker exec router3 /etc/startup.sh &&
-      docker exec host /etc/startup.sh &&
-      docker exec srv /etc/startup.sh"]
+    entrypoint: ["/bin/sh", "-c", "sleep 3 && /etc/startup.sh"]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./configs/runner/startup.sh:/etc/startup.sh
+
 
 networks:
   wan1:
