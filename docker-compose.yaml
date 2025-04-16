@@ -95,7 +95,6 @@ services:
     volumes:
       - ./configs/srv/startup.sh:/etc/startup.sh
     command: ["sh", "-c", "sh /etc/startup.sh && while true; do sleep 30; done"]
-    user: "1000:1000"
     healthcheck:
       test: ["CMD", "echo", "healthy"]
       interval: 2s
