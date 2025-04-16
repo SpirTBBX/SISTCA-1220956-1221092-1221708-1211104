@@ -82,7 +82,10 @@ services:
       retries: 5
 
   srv:
-    image: nginx
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    image: sistca/nginx
     container_name: srv
     networks:
       lan_srv:
