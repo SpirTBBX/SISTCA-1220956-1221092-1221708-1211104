@@ -5,14 +5,12 @@ services:
     privileged: true
     networks:
       lan_host:
-        ipv4_address: 37.8.181.254
+        ipv4_address: 10.10.10.254
       wan1:
-        ipv4_address: 23.10.49.2
-      wan2:
-        ipv4_address: 6.80.75.10
+        ipv4_address: 10.10.99.2
     volumes:
       - ./configs/r1/frr/:/etc/frr/
-      - ./configs/r1/startup.sh:/etc/startup.sh
+      - ./configs/r1/startup-tutorial.sh:/etc/startup-tutorial.sh
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
@@ -27,13 +25,13 @@ services:
     container_name: router2
     privileged: true
     networks:
-      wan2:
-         ipv4_address: 6.80.75.11
-      wan3:
-         ipv4_address: 95.120.2.66
+      wan1:
+         ipv4_address: 10.10.99.3
+      lan_srv:
+         ipv4_address: 10.10.11.254
     volumes:
       - ./configs/r2/frr/:/etc/frr/
-      - ./configs/r2/startup.sh:/etc/startup.sh
+      - ./configs/r2/startup-tutorial.sh:/etc/startup-tutorial.sh
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
@@ -41,43 +39,16 @@ services:
       interval: 2s
       timeout: 2s
       retries: 5
-
-  router3:
-    image: quay.io/frrouting/frr:10.2.1
-    container_name: router3
-    privileged: true
-    networks:
-      lan_srv:
-        ipv4_address: 55.73.20.254
-      wan1:
-        ipv4_address: 23.10.49.3
-      wan3:
-        ipv4_address: 95.120.2.67
-    volumes:
-      - ./configs/r3/frr/:/etc/frr/
-      - ./configs/r3/startup.sh:/etc/startup.sh
-    sysctls:
-      - net.ipv4.ip_forward=1
-    healthcheck:
-      test: ["CMD", "echo", "healthy"]
-      interval: 2s
-      timeout: 2s
-      retries: 5
-
 
   host:
-#   Para testar conectividade com o servidor:
-#   --spider   : permite confirmar a existência de um qualquer ficheiro no destino.
-#   --timeout  : permite definir um timeout para a resposta do servidor.
-#
-#   wget http://55.73.20.2 --spider --timeout 2
-#
+#    para testar conectividade com o servidor:
+#    wget http://55.73.20.2 --spider
     image: alpine
     container_name: host
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./configs/host/startup.sh:/etc/startup.sh
+      - ./configs/host/startup-tutorial.sh:/etc/startup-tutorial.sh
     networks:
       - lan_host
     command: ["sh", "-c", "while true; do sleep 30; done"]
@@ -95,12 +66,12 @@ services:
     container_name: srv
     networks:
       lan_srv:
-        ipv4_address: 55.73.20.2
+        ipv4_address: 10.10.11.2
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./configs/srv/startup.sh:/etc/startup.sh
-    command: ["sh", "-c", "sh /etc/startup.sh && while true; do sleep 30; done"]
+      - ./configs/srv/startup-tutorial.sh:/etc/startup-tutorial.sh
+    command: ["sh", "-c", "while true; do sleep 30; done"]
     healthcheck:
       test: ["CMD", "echo", "healthy"]
       interval: 2s
@@ -114,16 +85,14 @@ services:
         condition: service_healthy
       router2:
         condition: service_healthy
-      router3:
-        condition: service_healthy
       host:
         condition: service_healthy
       srv:
         condition: service_healthy
-    entrypoint: ["/bin/sh", "-c", "sleep 3 && /etc/startup.sh"]
+    entrypoint: ["/bin/sh", "-c", "sleep 3 && /etc/startup-tutorial.sh"]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./configs/runner/startup.sh:/etc/startup.sh
+      - ./configs/runner/startup-tutorial.sh:/etc/startup-tutorial.sh
 
 
 networks:
@@ -132,28 +101,16 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 23.10.49.0/29
-  wan2:
-    name: wan2
-    ipam:
-      driver: default
-      config:
-        - subnet: 6.80.75.8/29
-  wan3:
-    name: wan3
-    ipam:
-      driver: default
-      config:
-        - subnet: 95.120.2.64/29
+        - subnet: 10.10.99.0/29
   lan_host:
     name: lan_host
     ipam:
       driver: default
       config:
-        - subnet: 37.8.181.0/24
+        - subnet: 10.10.10.0/24
   lan_srv:
     name: lan_srv
     ipam:
       driver: default
       config:
-        - subnet: 55.73.20.0/24
+        - subnet: 10.10.11.0/24
