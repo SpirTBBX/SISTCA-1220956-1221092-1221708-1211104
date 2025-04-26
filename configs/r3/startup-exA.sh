@@ -8,3 +8,16 @@
 # ip route 10.10.11.0/24 10.10.99.11
 # exit
 # EOF
+
+vtysh << EOF
+conf t
+hostname router3
+password zebra
+enable password zebra
+router ospf
+ospf router-id 3.3.3.3
+network 10.10.99.0/29 area 0
+network 10.10.99.8/29 area 0
+exit
+write memory
+exit
