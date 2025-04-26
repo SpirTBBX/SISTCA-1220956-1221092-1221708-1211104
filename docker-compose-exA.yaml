@@ -14,7 +14,7 @@ services:
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
-      test: ["CMD", "echo", "healthy"]
+      test: [ "CMD", "echo", "healthy" ]
       interval: 2s
       timeout: 2s
       retries: 5
@@ -26,16 +26,16 @@ services:
     privileged: true
     networks:
       wan2:
-         ipv4_address: 10.10.99.11
+        ipv4_address: 10.10.99.11
       lan_srv:
-         ipv4_address: 10.10.11.254
+        ipv4_address: 10.10.11.254
     volumes:
       - ./configs/r2/frr/:/etc/frr/
       - ./configs/r2/startup-exA.sh:/etc/startup-exA.sh
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
-      test: ["CMD", "echo", "healthy"]
+      test: [ "CMD", "echo", "healthy" ]
       interval: 2s
       timeout: 2s
       retries: 5
@@ -46,23 +46,27 @@ services:
     privileged: true
     networks:
       wan1:
-         ipv4_address: 10.10.99.3
+        ipv4_address: 10.10.99.3
       wan2:
-         ipv4_address: 10.10.99.10
+        ipv4_address: 10.10.99.10
     volumes:
       - ./configs/r3/frr/:/etc/frr/
       - ./configs/r3/startup-exA.sh:/etc/startup-exA.sh
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
-      test: ["CMD", "echo", "healthy"]
+      test: [ "CMD", "echo", "healthy" ]
       interval: 2s
       timeout: 2s
       retries: 5
 
   host:
-#    para testar conectividade com o servidor:
-#    wget http://55.73.20.2 --spider
+    #   Para testar conectividade com o servidor:
+    #   --spider   : permite confirmar a existência de um qualquer ficheiro no destino.
+    #   --timeout  : permite definir um timeout para a resposta do servidor.
+    #
+    #   wget http://10.10.11.2 --spider --timeout 2
+    #
     image: alpine
     container_name: host
     cap_add:
@@ -71,9 +75,9 @@ services:
       - ./configs/host/startup.sh:/etc/startup.sh
     networks:
       - lan_host
-    command: ["sh", "-c", "while true; do sleep 30; done"]
+    command: [ "sh", "-c", "while true; do sleep 30; done" ]
     healthcheck:
-      test: ["CMD", "echo", "healthy"]
+      test: [ "CMD", "echo", "healthy" ]
       interval: 2s
       timeout: 2s
       retries: 5
@@ -91,9 +95,9 @@ services:
       - NET_ADMIN
     volumes:
       - ./configs/srv/startup.sh:/etc/startup.sh
-    command: ["sh", "-c", "while true; do sleep 30; done"]
+    command: [ "sh", "-c", "while true; do sleep 30; done" ]
     healthcheck:
-      test: ["CMD", "echo", "healthy"]
+      test: [ "CMD", "echo", "healthy" ]
       interval: 2s
       timeout: 2s
       retries: 5
@@ -111,7 +115,7 @@ services:
         condition: service_healthy
       srv:
         condition: service_healthy
-    entrypoint: ["/bin/sh", "-c", "sleep 3 && /etc/startup-exA.sh"]
+    entrypoint: [ "/bin/sh", "-c", "sleep 3 && /etc/startup-exA.sh" ]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./configs/runner/startup-exA.sh:/etc/startup-exA.sh

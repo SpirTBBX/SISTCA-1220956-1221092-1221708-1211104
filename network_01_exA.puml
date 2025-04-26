@@ -1,7 +1,7 @@
 @startuml
 ' https://plantuml.com/component-diagram
 
-title Rede Tutorial
+title Rede Exercício A
 
 rectangle "host" as Host
 rectangle "router1" as Router1
@@ -11,9 +11,9 @@ rectangle "srv" as Server
 
 Host "10.10.10.x\n(DHCP)" --> "10.10.10.254" Router1 : "lan_host\n10.10.10.0/24"
 
-Router1 "10.10.99.2" ---> "10.10.99.3" Router3 : wan1\n(10.10.99.0/29)
-Router3 "10.10.99.10"  ---> "10.10.99.11" Router2 : wan2\n (10.10.99.8/29)
+Router1 "10.10.99.2" ---> "10.10.99.3" Router3 : wan1\n10.10.99.0/29
+Router3 "10.10.99.10"  ---> "10.10.99.11" Router2 : wan2\n10.10.99.8/29
 
-Router2 "10.10.11.254" --> "10.10.11.2" Server : srv_lan\n(10.10.11.0/24)
+Router2 "10.10.11.254" --> "10.10.11.2" Server : srv_lan\n10.10.11.0/24
 
 @enduml
