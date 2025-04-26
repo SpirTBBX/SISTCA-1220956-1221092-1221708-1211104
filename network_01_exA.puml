@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/nwdiag
+
+title "Rede Tutorial"
+
+nwdiag {
+    host
+    network lan_host {
+    width = full
+        address = "10.10.10.0/24"
+
+        host [address = "10.10.10.x\n(DHCP)"];
+        router1 [address = "10.10.10.254"];
+    }
+
+    network wan1 {
+    width = full
+    address = "10.10.99.0/29"
+        router1 [address = "10.10.99.2"];
+        router3 [address = "10.10.99.3"]
+    }
+
+    network wan2 {
+    width = full
+    address = "10.10.99.8/29"
+        router3 [address = "10.10.99.10"];
+        router2 [address = "10.10.99.11"]
+    }
+
+    network lan_srv {
+    width = full
+    address = "10.10.11.0/24"
+        router2 [address = "10.10.11.254"];
+        srv [address = "10.10.11.2"]
+    }
+
+}
+@enduml
