@@ -66,8 +66,12 @@ services:
 
 
   host:
-#    para testar conectividade com o servidor:
-#    wget http://55.73.20.2 --spider
+#   Para testar conectividade com o servidor:
+#   --spider   : permite confirmar a existência de um qualquer ficheiro no destino.
+#   --timeout  : permite definir um timeout para a resposta do servidor.
+#
+#   wget http://55.73.20.2 --spider --timeout 2
+#
     image: alpine
     container_name: host
     cap_add:
