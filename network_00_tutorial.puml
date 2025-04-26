@@ -1,31 +1,17 @@
 @startuml
-'https://plantuml.com/nwdiag
+' https://plantuml.com/component-diagram
 
-title "Rede Tutorial"
+title Rede Tutorial
 
-nwdiag {
-    host
-    network lan_host {
-    width = full
-        address = "10.10.10.0/24"
+rectangle "host" as Host
+rectangle "router1" as Router1
+rectangle "router2" as Router2
+rectangle "srv" as Server
 
-        host [address = "10.10.10.x\n(DHCP)"];
-        router1 [address = "10.10.10.254"];
-    }
+Host "10.10.10.x\n(DHCP)" --> "10.10.10.254" Router1 : "lan_host\n10.10.10.0/24"
 
-    network wan1 {
-    width = full
-    address = "10.10.99.0/29"
-        router1 [address = "10.10.99.2"];
-        router2 [address = "10.10.99.3"]
-    }
+Router1 "10.10.99.2" ---> "10.10.99.3" Router2 : wan1\n(10.10.99.0/29)
 
-    network lan_srv {
-    width = full
-    address = "10.10.11.0/24"
-        router2 [address = "10.10.11.254"];
-        srv [address = "10.10.11.2"]
-    }
+Router2 "10.10.11.254" --> "10.10.11.2" Server : srv_lan\n(10.10.11.0/24)
 
-}
 @enduml

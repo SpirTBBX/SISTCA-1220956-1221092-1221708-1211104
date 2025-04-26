@@ -1,0 +1,81 @@
+@startuml
+' https://plantuml.com/component-diagram
+
+title Rede Tutorial
+
+rectangle "host" as Host
+rectangle "router1" as Router1
+rectangle "router3" as Router3
+rectangle "router2" as Router2
+rectangle "router4" as Router4 #LightGreen
+rectangle "srv" as Server
+rectangle " " as Spacer1
+rectangle " " as Spacer2
+
+
+Host "10.10.10.x\n(DHCP)" --> "10.10.10.254" Router1 : "lan_host\n10.10.10.0/24"
+
+Router1 "10.10.99.2" ---> "10.10.99.3" Router3 : wan1\n(10.10.99.0/29)
+Router3 "10.10.99.10"  ---> "10.10.99.11" Router2 : wan2\n (10.10.99.8/29)
+Router1 "10.10.99.18" ---> "10.10.99.19" Router4 : wan3\n(10.10.99.16/29)
+Router4 "10.10.99.26" ---> "10.10.99.27" Router2 : wan4\n(10.10.99.24/29)
+
+Router2 "10.10.11.254" --> "10.10.11.2" Server : srv_lan\n(10.10.11.0/24)
+
+Router3 -right- Spacer1
+Spacer1 -right- Spacer2
+Spacer2 -right- Router4
+
+hide Spacer1
+hide Spacer2
+
+@enduml
+
+'@startuml
+''https://plantuml.com/nwdiag
+'
+'title "Rede Tutorial"
+'
+'nwdiag {
+'    host
+'    network lan_host {
+'    width = full
+'        address = "10.10.10.0/24"
+'
+'        host [address = "10.10.10.x\n(DHCP)"];
+'        router1 [address = "10.10.10.254"];
+'    }
+'
+'    network wan1 {
+''    width = full
+'    address = "10.10.99.0/29"
+'        router1 [address = "10.10.99.2"];
+'        router3 [address = "10.10.99.3"]
+'    }
+'
+'    network wan3 {
+''    width = full
+'    address = "10.10.99.16/29"
+'        router1 [address = "10.10.99.18"];
+'        router4 [address = "10.10.99.19"]
+'    }
+'    network wan2 {
+''    width = full
+'    address = "10.10.99.8/29"
+'        router3 [address = "10.10.99.10"];
+'        router2 [address = "10.10.99.11"]
+'    }
+'    network wan4 {
+''    width = full
+'    address = "10.10.99.24/29"
+'        router4 [address = "10.10.99.26"];
+'        router2 [address = "10.10.99.27"]
+'    }
+'    network lan_srv {
+'    width = full
+'    address = "10.10.11.0/24"
+'        router2 [address = "10.10.11.254"];
+'        srv [address = "10.10.11.2"]
+'    }
+'}
+'@enduml
