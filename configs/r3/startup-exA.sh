@@ -19,6 +19,6 @@ ospf router-id 3.3.3.3
 network 10.10.99.0/29 area 0
 network 10.10.99.8/29 area 0
 exit
-write memory
 exit
+write memory
 EOF
