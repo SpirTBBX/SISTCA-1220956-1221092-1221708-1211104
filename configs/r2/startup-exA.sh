@@ -18,3 +18,4 @@ network 10.10.99.8/29 area 0
 exit
 write memory
 exit
+EOF

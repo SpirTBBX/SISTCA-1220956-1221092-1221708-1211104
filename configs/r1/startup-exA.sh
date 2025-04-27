@@ -13,8 +13,9 @@ password zebra
 enable password zebra
 router ospf
 ospf router-id 1.1.1.1
-network 10.10.11.0/24 area 0
-network 10.10.99.8/29 area 0
+network 10.10.10.0/24 area 0
+network 10.10.99.0/29 area 0
 exit
 write memory
 exit
+EOF
