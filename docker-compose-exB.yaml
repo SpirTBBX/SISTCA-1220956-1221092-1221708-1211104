@@ -150,26 +150,34 @@ services:
 networks:
   wan1:
     name: wan1
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: frr-wan1br
     ipam:
-      driver: default
       config:
         - subnet: 10.10.99.0/29
   wan2:
     name: wan2
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: frr-wan2br
     ipam:
-      driver: default
       config:
         - subnet: 10.10.99.8/29
   wan3:
     name: wan3
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: frr-wan3br
     ipam:
-      driver: default
       config:
         - subnet: 10.10.99.16/29
   wan4:
     name: wan4
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: frr-wan4br
     ipam:
-      driver: default
       config:
         - subnet: 10.10.99.24/29
   lan_host:
