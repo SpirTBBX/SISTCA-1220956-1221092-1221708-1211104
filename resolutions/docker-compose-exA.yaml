@@ -8,11 +8,9 @@ services:
         ipv4_address: 10.10.10.254
       wan1:
         ipv4_address: 10.10.99.2
-      wan3:
-        ipv4_address: 10.10.99.18
     volumes:
       - ./configs/r1/frr/daemons:/etc/frr/daemons
-      - ./configs/r1/startup-exB.sh:/etc/startup-exB.sh
+      - ./configs/r1/startup-exA.sh:/etc/startup-exA.sh
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
@@ -29,13 +27,11 @@ services:
     networks:
       wan2:
         ipv4_address: 10.10.99.11
-      wan4:
-        ipv4_address: 10.10.99.27
       lan_srv:
         ipv4_address: 10.10.11.254
     volumes:
       - ./configs/r2/frr/daemons:/etc/frr/daemons
-      - ./configs/r2/startup-exB.sh:/etc/startup-exB.sh
+      - ./configs/r2/startup-exA.sh:/etc/startup-exA.sh
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
@@ -55,27 +51,7 @@ services:
         ipv4_address: 10.10.99.10
     volumes:
       - ./configs/r3/frr/daemons:/etc/frr/daemons
-      - ./configs/r3/startup-exB.sh:/etc/startup-exB.sh
-    sysctls:
-      - net.ipv4.ip_forward=1
-    healthcheck:
-      test: [ "CMD", "echo", "healthy" ]
-      interval: 2s
-      timeout: 2s
-      retries: 5
-
-  router4:
-    image: quay.io/frrouting/frr:10.2.1
-    container_name: router4
-    privileged: true
-    networks:
-      wan3:
-        ipv4_address: 10.10.99.19
-      wan4:
-        ipv4_address: 10.10.99.26
-    volumes:
-      - ./configs/r4/frr/daemons:/etc/frr/daemons
-      - ./configs/r4/startup-exB.sh:/etc/startup-exB.sh
+      - ./configs/r3/startup-exA.sh:/etc/startup-exA.sh
     sysctls:
       - net.ipv4.ip_forward=1
     healthcheck:
@@ -135,16 +111,14 @@ services:
         condition: service_healthy
       router3:
         condition: service_healthy
-      router4:
-        condition: service_healthy
       host:
         condition: service_healthy
       srv:
         condition: service_healthy
-    entrypoint: [ "/bin/sh", "-c", "sleep 3 && /etc/startup-exB.sh" ]
+    entrypoint: [ "/bin/sh", "-c", "sleep 3 && /etc/startup-exA.sh" ]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./configs/runner/startup-exB.sh:/etc/startup-exB.sh
+      - ./configs/runner/startup-exA.sh:/etc/startup-exA.sh
 
 
 networks:
@@ -164,22 +138,6 @@ networks:
     ipam:
       config:
         - subnet: 10.10.99.8/29
-  wan3:
-    name: wan3
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: frr-wan3br
-    ipam:
-      config:
-        - subnet: 10.10.99.16/29
-  wan4:
-    name: wan4
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: frr-wan4br
-    ipam:
-      config:
-        - subnet: 10.10.99.24/29
   lan_host:
     name: lan_host
     ipam:
