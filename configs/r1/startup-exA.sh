@@ -16,6 +16,12 @@ ospf router-id 1.1.1.1
 network 10.10.10.0/24 area 0
 network 10.10.99.0/29 area 0
 exit
+interface eth0
+ip ospf passive
+exit
+interface eth1
+ip ospf passive
+exit
 exit
 write memory
 EOF
