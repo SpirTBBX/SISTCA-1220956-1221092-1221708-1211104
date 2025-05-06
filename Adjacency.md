@@ -1,3 +1,19 @@
+# Adjacency process in _tcpdump_
+
+<!-- TOC -->
+* [Adjacency process in _tcpdump_](#adjacency-process-in-_tcpdump_)
+    * [OSPF Down](#ospf-down)
+    * [OSPF Init](#ospf-init)
+    * [OSPF 2-Way](#ospf-2-way)
+    * [OSPF ExStart](#ospf-exstart)
+    * [OSPF Exchange](#ospf-exchange)
+    * [OSPF Loading](#ospf-loading)
+    * [OSPF Full](#ospf-full)
+<!-- TOC -->
+
+### OSPF Down
+- Nenhum router conhece a existência do outro.
+```
 16:48:07.027729 IP (tos 0xc0, ttl 1, id 12056, offset 0, flags [none], proto OSPF (89), length 64)
     10.10.99.3 > 224.0.0.5: OSPFv2, Hello, length 44
         Router-ID 3.3.3.3, Backbone Area, Authentication Type: none (0)
@@ -10,6 +26,10 @@
         Options [External]
           Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.248, Priority 1
           Designated Router 10.10.99.2
+```
+### OSPF Init
+- Quando um router recebe um Hello de outro router, mas ainda não se vê na mensagem recebida.
+```
 16:48:17.027713 IP (tos 0xc0, ttl 1, id 12058, offset 0, flags [none], proto OSPF (89), length 68)
     10.10.99.3 > 224.0.0.5: OSPFv2, Hello, length 48
         Router-ID 3.3.3.3, Backbone Area, Authentication Type: none (0)
@@ -18,6 +38,10 @@
           Designated Router 10.10.99.3
           Neighbor List:
             1.1.1.1
+```
+### OSPF 2-Way
+- router1 encontra o seu ID na lista de vizinhos do router3. Está estabelecida a comunicação bidirecional.
+```
 16:48:17.027894 IP (tos 0xc0, ttl 1, id 12040, offset 0, flags [none], proto OSPF (89), length 52)
     10.10.99.2 > 10.10.99.3: OSPFv2, Database Description, length 32
         Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
@@ -26,6 +50,10 @@
     10.10.99.3 > 10.10.99.2: OSPFv2, Database Description, length 32
         Router-ID 3.3.3.3, Backbone Area, Authentication Type: none (0)
         Options [External], DD Flags [Init, More, Master], MTU: 1500, Sequence: 0x26bdf00b
+```
+### OSPF ExStart
+- É negociada a relação Master/Slave. Isto é visível na presença das flags Init, More e Master no pacote Database Description
+```
 16:48:17.028021 IP (tos 0xc0, ttl 1, id 12041, offset 0, flags [none], proto OSPF (89), length 72)
     10.10.99.2 > 10.10.99.3: OSPFv2, Database Description, length 52
         Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
@@ -46,6 +74,10 @@
           Advertising Router 3.3.3.3, seq 0x80000001, age 20s, length 12
             Network LSA (2), LSA-ID: 10.10.99.10
             Options: [External]
+```
+### OSPF Exchange
+- Verifica-se pelo envio das tabelas de routing no pacote Database Description com headers Link State Advertisement (LSA)
+```
 16:48:17.028071 IP (tos 0xc0, ttl 1, id 12062, offset 0, flags [none], proto OSPF (89), length 56)
     10.10.99.3 > 10.10.99.2: OSPFv2, LS-Request, length 36
         Router-ID 3.3.3.3, Backbone Area, Authentication Type: none (0)
@@ -60,6 +92,10 @@
           Advertising Router: 2.2.2.2, Router LSA (1), LSA-ID: 2.2.2.2
           Advertising Router: 3.3.3.3, Router LSA (1), LSA-ID: 3.3.3.3
           Advertising Router: 3.3.3.3, Network LSA (2), LSA-ID: 10.10.99.10
+```
+### OSPF Loading
+- Verifica-se pelo pedido de LSAs que sejam desconhecidos do vizinho.
+```
 16:48:17.028106 IP (tos 0xc0, ttl 1, id 12044, offset 0, flags [none], proto OSPF (89), length 96)
     10.10.99.2 > 10.10.99.3: OSPFv2, LS-Update, length 76
         Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0), 1 LSA
@@ -190,6 +226,11 @@
           Advertising Router 1.1.1.1, seq 0x80000006, age 6s, length 28
             Router LSA (1), LSA-ID: 1.1.1.1
             Options: [External]
+```
+### OSPF Full
+- Ambos os routers sincronizaram suas LSDBs (Link-State Databases). A adjacência está completamente formada.
+- Verifica-se pelo retomar de envio de pacotes Hello, após várias mensagens de LS-Update e LS-Ack
+```
 16:48:26.776488 IP (tos 0xc0, ttl 1, id 12049, offset 0, flags [none], proto OSPF (89), length 68)
     10.10.99.2 > 224.0.0.5: OSPFv2, Hello, length 48
         Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
@@ -206,3 +247,4 @@
           Designated Router 10.10.99.3, Backup Designated Router 10.10.99.2
           Neighbor List:
             1.1.1.1
+```
