@@ -13,5 +13,6 @@ docker exec router1 /etc/startup-challenge.sh
 docker exec router2 /etc/startup-challenge.sh
 docker exec router3 /etc/startup-challenge.sh
 docker exec router4 /etc/startup-challenge.sh
+sleep 3
 docker exec host /etc/startup.sh
 docker exec srv /etc/startup.sh
