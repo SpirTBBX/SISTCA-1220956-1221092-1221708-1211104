@@ -18,10 +18,12 @@ network 10.10.99.0/29 area 0
 network 10.10.99.16/29 area 0
 exit
 interface $ROUTER3_IFACE
-ip ospf cost 10
+ip ospf cost 20
 interface $ROUTER4_IFACE
-ip ospf cost 30
+ip ospf cost 20
 exit
 write memory
 exit
 EOF
+
+sysctl -w net.ipv4.fib_multipath_hash_policy=0
