@@ -1,6 +1,10 @@
 services:
   router1:
-    image: quay.io/frrouting/frr:10.2.1
+    build:
+      context: .
+      dockerfile: Dockerfile-router1
+    image: sistca/router1
+    #image: quay.io/frrouting/frr:10.2.1
     container_name: router1
     privileged: true
     networks:
@@ -91,7 +95,11 @@ services:
     #
     #   wget http://10.10.11.2 --spider --timeout 2
     #
-    image: alpine
+    #image: alpine
+    build:
+      context: .
+      dockerfile: Dockerfile-host
+    image: sistca/host
     container_name: host
     cap_add:
       - NET_ADMIN
@@ -109,8 +117,8 @@ services:
   srv:
     build:
       context: .
-      dockerfile: Dockerfile-nginx
-    image: sistca/nginx
+      dockerfile: Dockerfile-srv
+    image: sistca/srv
     container_name: srv
     networks:
       lan_srv:
