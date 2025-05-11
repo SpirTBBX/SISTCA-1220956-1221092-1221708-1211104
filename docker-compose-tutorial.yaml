@@ -65,8 +65,8 @@ services:
   srv:
     build:
       context: .
-      dockerfile: Dockerfile-nginx
-    image: sistca/nginx
+      dockerfile: Dockerfile-srv
+    image: sistca/srv
     container_name: srv
     networks:
       lan_srv:

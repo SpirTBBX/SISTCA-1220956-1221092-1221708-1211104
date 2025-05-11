@@ -25,5 +25,3 @@ exit
 write memory
 exit
 EOF
-
-sysctl -w net.ipv4.fib_multipath_hash_policy=0
